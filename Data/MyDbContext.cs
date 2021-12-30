@@ -15,6 +15,7 @@ namespace SampleAPI.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetails> OrderDetails { get; set; }
+        public DbSet<User> Users { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -41,6 +42,12 @@ namespace SampleAPI.Data
                     .WithMany(e => e.OrderDetails)
                     .HasForeignKey(e => e.ProductID)
                     .HasConstraintName("FK_OrderDetails_Product");
+            });
+
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasIndex(e => e.UserName).IsUnique();
+
             });
         }
     }

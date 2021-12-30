@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -7,12 +8,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SampleAPI.Data;
+using SampleAPI.Models;
 using SampleAPI.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace SampleAPI
@@ -38,6 +42,28 @@ namespace SampleAPI
 
             services.AddScoped<IProductRepository, ProductRepository>();
 
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+
+            var SecretKey = Configuration["AppSettings:SecretKey"];
+            var SecretKeyBytes = Encoding.UTF8.GetBytes(SecretKey);
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(opt =>
+                    {
+                        opt.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            //Normal token
+                            ValidateIssuer = false,
+                            ValidateAudience = false,
+
+                            //Sign in token
+                            ValidateIssuerSigningKey = true,
+                            IssuerSigningKey = new SymmetricSecurityKey(SecretKeyBytes),
+
+                            ClockSkew = TimeSpan.Zero
+                        };
+                    });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "SampleAPI", Version = "v1" });
@@ -57,6 +83,8 @@ namespace SampleAPI
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

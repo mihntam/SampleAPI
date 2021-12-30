@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SampleAPI.Data;
 using SampleAPI.Models;
@@ -57,6 +58,7 @@ namespace SampleAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult Add(Models.Product product)
         {
             try
@@ -71,6 +73,7 @@ namespace SampleAPI.Controllers
         }
 
         [HttpPut("id")]
+        [Authorize]
         public IActionResult Update(string id, Models.Product product)
         {
             try
@@ -89,6 +92,7 @@ namespace SampleAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public IActionResult Delete(string id)
         {
             try
