@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SampleAPI.Data;
 
 namespace SampleAPI.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    partial class MyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220101103941_Update_OrderDetails")]
+    partial class Update_OrderDetails
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,7 +39,7 @@ namespace SampleAPI.Migrations
 
             modelBuilder.Entity("SampleAPI.Data.Order", b =>
                 {
-                    b.Property<Guid>("OrderId")
+                    b.Property<Guid>("OrderID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -63,22 +65,17 @@ namespace SampleAPI.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("OrderId");
-
-                    b.HasIndex("UserId");
+                    b.HasKey("OrderID");
 
                     b.ToTable("Order");
                 });
 
             modelBuilder.Entity("SampleAPI.Data.OrderDetails", b =>
                 {
-                    b.Property<Guid>("OrderID")
+                    b.Property<Guid?>("OrderID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ProductID")
+                    b.Property<Guid?>("ProductID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Quantity")
@@ -146,15 +143,6 @@ namespace SampleAPI.Migrations
                         .IsUnique();
 
                     b.ToTable("User");
-                });
-
-            modelBuilder.Entity("SampleAPI.Data.Order", b =>
-                {
-                    b.HasOne("SampleAPI.Data.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SampleAPI.Data.OrderDetails", b =>

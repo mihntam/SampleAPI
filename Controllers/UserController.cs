@@ -88,10 +88,10 @@ namespace SampleAPI.Controllers
                 {
                     new Claim("UserId", user.UserId.ToString()),
                     new Claim("UserName", user.UserName),
-                    new Claim("UserRole", user.Role)
+                    new Claim(ClaimTypes.Role, user.Role)
                 }),
 
-                Expires = DateTime.UtcNow.AddMinutes(30),
+                Expires = DateTime.UtcNow.AddMinutes(5),
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(secretKeyBytes),
                     SecurityAlgorithms.HmacSha256Signature

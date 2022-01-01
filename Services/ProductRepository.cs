@@ -82,6 +82,7 @@ namespace SampleAPI.Services
                 Image = product.Image,
                 Description = product.Description,
                 Price = product.Price,
+                CategoryId = product.CategoryID,
                 CategoryName = product.Category?.Name
 
             }).ToList();
@@ -91,23 +92,24 @@ namespace SampleAPI.Services
 
         public ProductModel GetById(string id)
         {
-            var product = _context.Products.SingleOrDefault(item => item.ProductID == Guid.Parse(id));
-            if (product == null)
+            var product = _context.Products.Include(product => product.Category).SingleOrDefault(item => item.ProductID == Guid.Parse(id));
+            if (product != null)
             {
-                return null;
+                var result = new ProductModel
+                {
+                    Id = product.ProductID,
+                    Name = product.ProductName,
+                    Image = product.Image,
+                    Description = product.Description,
+                    CategoryId = product.CategoryID,
+                    CategoryName = product.Category?.Name,
+                    Price = product.Price
+                };
+
+                return result;
             }
 
-            var result = new ProductModel
-            {
-                Id = product.ProductID,
-                Name = product.ProductName,
-                Image = product.Image,
-                Description = product.Description,
-                CategoryName = product.Category.Name,
-                Price = product.Price
-            };
-
-            return result;
+            return null;
         }
 
         public ProductModel Add(Models.Product product)
@@ -118,10 +120,13 @@ namespace SampleAPI.Services
                 ProductName = product.Name,
                 Image = product.Image,
                 Description = product.Description,
+                CategoryID = product.CategoryId,
                 Price = product.Price,
             };
             _context.Add(_product);
             _context.SaveChanges();
+
+            var catName = _context.Categories.SingleOrDefault(i => i.CategoryID == product.CategoryId);
 
             var result = new ProductModel
             {
@@ -129,7 +134,9 @@ namespace SampleAPI.Services
                 Name = _product.ProductName,
                 Image = _product.Image,
                 Description = _product.Description,
-                Price = _product.Price
+                Price = _product.Price,
+                CategoryId = _product.CategoryID,
+                CategoryName = catName.Name,
             };
 
             return result;

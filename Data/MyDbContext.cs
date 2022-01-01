@@ -23,7 +23,7 @@ namespace SampleAPI.Data
             modelBuilder.Entity<Order>(e =>
             {
                 e.ToTable("Order");
-                e.HasKey(order => order.OrderID);
+                e.HasKey(order => order.OrderId);
                 e.Property(order => order.OrderDate).HasDefaultValueSql("getdate()");
                 e.Property(order => order.Receiver).IsRequired().HasMaxLength(250);
             });

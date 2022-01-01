@@ -74,7 +74,7 @@ namespace SampleAPI.Controllers
             }
         }
 
-        [HttpPut("id")]
+        [HttpPut("{id}")]
         [Authorize(Roles = "admin")]
         public IActionResult Update(string id, Models.Product product)
         {

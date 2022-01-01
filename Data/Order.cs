@@ -7,20 +7,15 @@ using System.Threading.Tasks;
 
 namespace SampleAPI.Data
 {
-    public enum OrderStatus
-    {
-        New = 0,
-        Payment = 1,
-        Complete = 2,
-        Cancel = -1
-    }
-
     public class Order
     {
-        public Guid OrderID { get; set; }
+        public Guid OrderId { get; set; }
+        public Guid? UserId { get; set; }
+        [ForeignKey("UserId")]
+        public User User { get; set; }
         public DateTime OrderDate { get; set; }
         public DateTime? DeliveryDate { get; set; }
-        public OrderStatus OrderStatus { get; set; }
+        public string OrderStatus { get; set; }
         public string Receiver { get; set; }
         public string Adresss { get; set; }
         public string PhoneNumber { get; set; }
