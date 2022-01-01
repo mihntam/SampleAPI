@@ -26,8 +26,36 @@ namespace SampleAPI.Controllers
             _appSettings = optionsMonitor.CurrentValue;
         }
 
+        [HttpPost("Register")]
+        public IActionResult Register(UserModel model)
+        {
+            try
+            {
+                var user = new User
+                {
+                    UserId = new Guid(),
+                    UserName = model.UserName,
+                    Password = model.Password,
+                    Role = "user"
+                };
+
+                _context.Add(user);
+                _context.SaveChanges();
+
+                return Ok(new
+                {
+                    Success = true,
+                    Data = user
+                });
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
         [HttpPost("Login")]
-        public IActionResult Validate(LoginModel model)
+        public IActionResult Validate(UserModel model)
         {
             var user = _context.Users.SingleOrDefault(u =>
                 u.UserName == model.UserName && u.Password == model.Password
@@ -59,7 +87,8 @@ namespace SampleAPI.Controllers
                 Subject = new ClaimsIdentity(new[]
                 {
                     new Claim("UserId", user.UserId.ToString()),
-                    new Claim("UserName", user.UserName)
+                    new Claim("UserName", user.UserName),
+                    new Claim("UserRole", user.Role)
                 }),
 
                 Expires = DateTime.UtcNow.AddMinutes(30),

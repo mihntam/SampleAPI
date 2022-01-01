@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SampleAPI.Models
 {
-    public class LoginModel
+    public class UserModel
     {
         [Required]
         [MaxLength(50)]

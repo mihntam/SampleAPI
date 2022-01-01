@@ -24,6 +24,7 @@ namespace SampleAPI.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult GetAll(string search, double? from, double? to, string sortBy, int page = 1)
         {
             try
@@ -39,6 +40,7 @@ namespace SampleAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public IActionResult GetProductById(string id)
         {
             try
@@ -58,7 +60,7 @@ namespace SampleAPI.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "admin")]
         public IActionResult Add(Models.Product product)
         {
             try
@@ -73,7 +75,7 @@ namespace SampleAPI.Controllers
         }
 
         [HttpPut("id")]
-        [Authorize]
+        [Authorize(Roles = "admin")]
         public IActionResult Update(string id, Models.Product product)
         {
             try
@@ -92,7 +94,7 @@ namespace SampleAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Roles = "admin")]
         public IActionResult Delete(string id)
         {
             try

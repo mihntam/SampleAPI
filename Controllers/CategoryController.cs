@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SampleAPI.Data;
 using SampleAPI.Models;
@@ -21,6 +22,7 @@ namespace SampleAPI.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult GetAll()
         {
             try
@@ -36,6 +38,7 @@ namespace SampleAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public IActionResult GetById(string id)
         {
             try
@@ -59,6 +62,7 @@ namespace SampleAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public IActionResult CreateNew(CategoryModel model)
         {
             try
@@ -85,6 +89,7 @@ namespace SampleAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
         public IActionResult UpdateById(string id, CategoryModel model)
         {
             try
@@ -111,6 +116,7 @@ namespace SampleAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "admin")]
         public IActionResult RemoveCategory(string id)
         {
             try

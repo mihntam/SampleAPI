@@ -21,5 +21,7 @@ namespace SampleAPI.Data
         [MaxLength(50)]
         public string Password { get; set; }
 
+        public string Role { get; set; }
+
     }
 }
