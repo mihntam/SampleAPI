@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -26,12 +27,68 @@ namespace SampleAPI.Controllers
             _appSettings = optionsMonitor.CurrentValue;
         }
 
+        [HttpGet]
+        [Authorize(Roles = "admin")]
+        public IActionResult GetAll()
+        {
+            try
+            {
+                var allUser = _context.Users.AsQueryable();
+                allUser = allUser.OrderBy(i => i.UserId);
+
+                var categoryList = allUser.Select(user => new UserInfo
+                {
+                    UserId = user.UserId,
+                    UserName = user.UserName,
+                    Password = user.Password,
+                    Role = user.Role
+                }).ToList();
+
+                return Ok(allUser);
+            }
+            catch
+            {
+
+                return BadRequest();
+            }
+        }
+
+        [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
+        public IActionResult UpdateById(string id, Models.User model)
+        {
+            try
+            {
+                var user = _context.Users.SingleOrDefault(item =>
+                    item.UserId == Guid.Parse(id)
+                );
+
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                user.UserName = model.UserName;
+                user.Password = model.Password;
+                user.Role = model.Role;
+
+                _context.SaveChanges();
+
+                return Ok(user);
+            }
+            catch
+            {
+
+                return BadRequest();
+            }
+        }
+
         [HttpPost("Register")]
         public IActionResult Register(UserModel model)
         {
             try
             {
-                var user = new User
+                var user = new Data.User
                 {
                     UserId = new Guid(),
                     UserName = model.UserName,
@@ -77,7 +134,7 @@ namespace SampleAPI.Controllers
             });
         }
 
-        private string GenerateToken(User user)
+        private string GenerateToken(Data.User user)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
             var secretKeyBytes = Encoding.UTF8.GetBytes(_appSettings.SecretKey);
